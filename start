@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [[ $EUID -ne 0 ]]; then
+   echo -e "\033[0;31m[-] This script must be run as root"
+   exit 1
+fi
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+
+terraform init
+printf "\n\n\n"
+terraform apply -auto-approve
+
+IP=`terraform output public_ip`
+
+sleep 10
+
+printf "[OpenVPN]\n$IP" > inventory
+printf "\n\n\n"
+ansible-playbook playbook.yml
+ANSIBLE_STATUS=$?
+
+printf "\n\n\n"
+aws ec2 describe-instances |
+    jq -j '.[] | .[] | .Instances | .[].LaunchTime, " - ", .[].State.Name, "\n"' |
+    sort
+
+printf "\n\n\n"
+sudo screen -S "BUG" -d -m openvpn $DIR/bug.ovpn
+echo -e "\033[0;32m[+] Started BUG VPN"
+
+sleep 2
+ifconfig tun0

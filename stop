@@ -1,0 +1,18 @@
+#!/bin/bash
+
+killall openvpn
+killall screen
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+
+terraform destroy -auto-approve
+
+printf "\n\n\n"
+
+aws ec2 describe-instances |
+    jq -j '.[] | .[] | .Instances | .[].LaunchTime, " - ", .[].State.Name, "\n"' |
+    sort
+
+aws ec2 describe-volumes \
+--query 'Volumes[*].{ID:VolumeId,InstanceId:Attachments[0].InstanceId,AZ:AvailabilityZone,Size:Size}'
