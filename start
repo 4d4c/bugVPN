@@ -24,6 +24,9 @@ printf "\n\n\n"
 aws ec2 describe-instances |
     jq -j '.[] | .[] | .Instances | .[].LaunchTime, " - ", .[].State.Name, "\n"' |
     sort
+aws ec2 describe-volumes \
+    --query 'Volumes[*].{ID:VolumeId,InstanceId:Attachments[0].InstanceId,AZ:AvailabilityZone,Size:Size}'
+
 
 printf "\n\n\n"
 sudo screen -S "BUG" -d -m openvpn $DIR/bug.ovpn
