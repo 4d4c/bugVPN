@@ -19,7 +19,6 @@ sleep 10
 printf "[OpenVPN]\n$IP" > inventory
 printf "\n\n\n"
 ansible-playbook playbook.yml
-ANSIBLE_STATUS=$?
 
 printf "\n\n\n"
 aws ec2 describe-instances |
