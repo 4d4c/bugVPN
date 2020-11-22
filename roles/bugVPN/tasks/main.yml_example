@@ -174,8 +174,9 @@
     line: "{{ item.value }}"
   with_items:
     - { regex: 'remote my-server-1 1194', value: 'remote {{ groups["OpenVPN"][0] }} 1194' }
-    - { regex: ';user nobody', value: 'user nobody' }
-    - { regex: ';group nogroup', value: 'group nogroup' }
+    # Keep permissions for "down /etc/openvpn/update-resolv-conf" script
+    # - { regex: ';user nobody', value: 'user nobody' }
+    # - { regex: ';group nogroup', value: 'group nogroup' }
     - { regex: 'ca ca.crt', value: '#ca ca.crt' }
     - { regex: 'cert client.crt', value: '#cert client.crt' }
     - { regex: 'key client.key', value: '#key client.key' }
@@ -185,6 +186,13 @@
   become: yes
   shell: "{{ item }}"
   with_items:
+    # DNS overwrite
+    - echo -e 'dhcp-option DNS 8.8.8.8' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
+    - echo -e 'dhcp-option DNS 127.0.0.1' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
+    - echo -e 'script-security 2' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
+    - echo -e 'up /etc/openvpn/update-resolv-conf' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
+    - echo -e 'down /etc/openvpn/update-resolv-conf' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
+
     - echo -e '<ca>' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
     - cat {{ ansible_env.HOME }}/openvpn-ca/keys/ca.crt >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
     - echo -e '</ca>\n<cert>' >> {{ ansible_env.HOME }}/openvpn-ca/bug/bug.ovpn
