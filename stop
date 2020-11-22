@@ -1,7 +1,8 @@
 #!/bin/bash
 
-killall openvpn
-killall screen
+pkill openvpn
+pkill openvpn
+pkill screen
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $DIR
