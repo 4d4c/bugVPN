@@ -1,7 +1,6 @@
 .terraform/*
+.terraform*
 *.key
 *.ovpn
 *.tfstate*
-inventory
 variables.tf
-roles/bugVPN/tasks/main.yml

@@ -12,13 +12,16 @@ terraform init
 printf "\n\n\n"
 terraform apply -auto-approve
 
-IP=`terraform output public_ip`
+IP=`terraform output -raw public_ip`
 
 sleep 10
 
-printf "[OpenVPN]\n$IP" > inventory
-printf "\n\n\n"
-ansible-playbook playbook.yml
+echo -e "\033[0;36m[+] Sending deploy script"
+scp -o "StrictHostKeyChecking=accept-new" -i $DIR/bugVPN.key $DIR/deploy.sh ubuntu@$IP:deploy.sh
+echo -e "\033[0;36m[+] Running deploy script"
+ssh -i $DIR/bugVPN.key ubuntu@$IP 'chmod +x ~/deploy.sh; ~/deploy.sh'
+echo -e "\033[0;36m[+] Getting OVPN file"
+scp -i $DIR/bugVPN.key ubuntu@$IP:bugVPN.ovpn $DIR/bugVPN.ovpn
 
 printf "\n\n\n"
 aws ec2 describe-instances |
@@ -29,7 +32,7 @@ aws ec2 describe-volumes \
 
 
 printf "\n\n\n"
-sudo screen -S "BUG" -d -m openvpn $DIR/bug.ovpn
+sudo screen -S "BUG" -d -m openvpn $DIR/bugVPN.ovpn
 echo -e "\033[0;32m[+] Started BUG VPN"
 
 sleep 2

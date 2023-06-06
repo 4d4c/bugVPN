@@ -25,6 +25,7 @@
                 "ec2:DescribeInstanceAttribute",
                 "ec2:DescribeInstances",
                 "ec2:TerminateInstances",
+                "ec2:DescribeInstanceTypes",
                 "ec2:DescribeInstanceCreditSpecifications",
 
                 "ec2:DescribeNetworkInterfaces",

@@ -2,17 +2,17 @@ provider "aws" {
     region = "eu-west-2"
 }
 
-resource "aws_instance" "VPN-bug" {
+resource "aws_instance" "bugVPN" {
     tags = {
-        Name = "VPN-bug"
+        Name = "bugVPN"
     }
 
-    ami                    = "ami-006a0174c6c25ac06"
+    ami                    = "ami-0ee7c705255f9be61"
     instance_type          = "t2.micro"
 
     key_name               = var.ssh_key_name
 
-    vpc_security_group_ids = [aws_security_group.VPN-bug.id]
+    vpc_security_group_ids = [aws_security_group.bugVPN.id]
 
     root_block_device {
         volume_size           = var.volume_size
@@ -20,11 +20,11 @@ resource "aws_instance" "VPN-bug" {
     }
 }
 
-resource "aws_security_group" "VPN-bug" {
-    name = "VPN-bug"
+resource "aws_security_group" "bugVPN" {
+    name = "bugVPN"
 
     tags = {
-        Name = "VPN-bug"
+        Name = "bugVPN"
     }
 
     ingress {
@@ -59,16 +59,16 @@ resource "aws_security_group" "VPN-bug" {
     }
 }
 
-# resource "aws_ebs_volume" "VPN-bug" {
+# resource "aws_ebs_volume" "bugVPN" {
 #     availability_zone = "eu-west-2a"
 #     size              = 6
 #
 #     tags = {
-#         Name = "VPN-bug"
+#         Name = "bugVPN"
 #     }
 # }
 
 output "public_ip" {
-    value       = aws_instance.VPN-bug.public_ip
+    value       = aws_instance.bugVPN.public_ip
     description = "The public IP of the server"
 }
